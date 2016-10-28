@@ -1,5 +1,4 @@
 #!/bin/sh
 
-LOCAL_STATE=~/.pinata-sshd
-AGENT=`cat ${LOCAL_STATE}/agent_socket_path | sed -e 's,/tmp/,,g'`
-echo "-v ${LOCAL_STATE}/$AGENT:/tmp/ssh-agent.sock --env SSH_AUTH_SOCK=/tmp/ssh-agent.sock"
+eval $(pinata-ssh-env 2>/dev/null)
+echo "-v $PINATA_LOCAL_AGENT:$PINATA_SSH_AUTH_SOCK --env SSH_AUTH_SOCK=$PINATA_SSH_AUTH_SOCK"
