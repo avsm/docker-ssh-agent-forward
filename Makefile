@@ -13,5 +13,6 @@ install:
 	cp ssh-find-agent.sh $(PREFIX)/share/pinata-ssh-agent/ssh-find-agent.sh
 	@mkdir -p $(BINDIR)
 	cp pinata-build-sshd.sh $(BINDIR)/pinata-build-sshd
+	cp pinata-ssh-env.sh $(BINDIR)/pinata-ssh-env
 	cp pinata-ssh-forward.sh $(BINDIR)/pinata-ssh-forward
 	cp pinata-ssh-mount.sh $(BINDIR)/pinata-ssh-mount
