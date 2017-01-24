@@ -18,7 +18,7 @@ IP=`docker inspect --format '{{(index (index .NetworkSettings.Ports "22/tcp") 0)
 ssh-keyscan -p ${LOCAL_PORT} ${IP} > ${LOCAL_STATE}/known_hosts 2>/dev/null
 
 ssh -f -o "UserKnownHostsFile=${LOCAL_STATE}/known_hosts" \
-  -A -p ${LOCAL_PORT} root@${IP} \
+  -A -S none -p ${LOCAL_PORT} root@${IP} \
   /root/ssh-find-agent.sh
 
 echo 'Agent forwarding successfully started.'
