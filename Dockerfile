@@ -6,7 +6,8 @@ RUN mkdir /root/.ssh && \
     chmod 700 /root/.ssh && \
     ssh-keygen -A
 COPY ssh-find-agent.sh /root/ssh-find-agent.sh
+COPY docker-entrypoint.sh /
 EXPOSE 22
 VOLUME ["/root/.ssh/authorized_keys"]
-ENTRYPOINT ["/usr/bin/tini","--"]
+ENTRYPOINT ["/sbin/tini", "--", "/docker-entrypoint.sh"]
 CMD ["/usr/sbin/sshd","-D"]
