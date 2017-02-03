@@ -10,7 +10,7 @@ install:
 	@mkdir -p $(PREFIX)/share/pinata-ssh-agent
 	cp Dockerfile $(PREFIX)/share/pinata-ssh-agent
 	cp ssh-build.sh $(PREFIX)/share/pinata-ssh-agent/ssh-build
-	cp ssh-find-agent.sh $(PREFIX)/share/pinata-ssh-agent/ssh-find-agent.sh
+	cp ssh-forward-agent.sh $(PREFIX)/share/pinata-ssh-agent/ssh-forward-agent.sh
 	@mkdir -p $(BINDIR)
 	cp pinata-build-sshd.sh $(BINDIR)/pinata-build-sshd
 	cp pinata-ssh-forward.sh $(BINDIR)/pinata-ssh-forward

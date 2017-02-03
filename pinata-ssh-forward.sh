@@ -1,4 +1,5 @@
-#!/bin/sh -e
+#!/bin/sh
+set -e
 
 IMAGE_NAME=pinata-sshd
 CONTAINER_NAME=pinata-sshd
@@ -9,17 +10,22 @@ docker rm -f ${CONTAINER_NAME} >/dev/null 2>&1 || true
 rm -rf ${LOCAL_STATE}
 mkdir -p ${LOCAL_STATE}
 
+ssh-add -L >${LOCAL_STATE}/authorized_keys
+
 docker run --name ${CONTAINER_NAME} \
-  -v ~/.ssh/id_rsa.pub:/root/.ssh/authorized_keys \
-  -v ${LOCAL_STATE}:/tmp \
+  -v ${LOCAL_STATE}:/tmp/.pinata-sshd \
   -d -p ${LOCAL_PORT}:22 ${IMAGE_NAME} > /dev/null
 
-IP=`docker inspect --format '{{(index (index .NetworkSettings.Ports "22/tcp") 0).HostIp }}' ${CONTAINER_NAME}`
+if [ "${DOCKER_HOST}" ]; then
+  IP=$(echo $DOCKER_HOST | awk -F '//' '{print $2}' | awk -F ':' '{print $1}')
+else
+  IP=127.0.0.1
+fi
 ssh-keyscan -p ${LOCAL_PORT} ${IP} > ${LOCAL_STATE}/known_hosts 2>/dev/null
 
 ssh -f -o "UserKnownHostsFile=${LOCAL_STATE}/known_hosts" \
   -A -p ${LOCAL_PORT} root@${IP} \
-  /root/ssh-find-agent.sh
+  /root/ssh-forward-agent.sh
 
 echo 'Agent forwarding successfully started.'
 echo 'Run "pinata-ssh-mount" to get a command-line fragment that'

@@ -1,5 +1,3 @@
 #!/bin/sh
 
-LOCAL_STATE=~/.pinata-sshd
-AGENT=`cat ${LOCAL_STATE}/agent_socket_path | sed -e 's,/tmp/,,g'`
-echo "-v ${LOCAL_STATE}/$AGENT:/tmp/ssh-agent.sock --env SSH_AUTH_SOCK=/tmp/ssh-agent.sock"
+echo "--volumes-from pinata-sshd --env SSH_AUTH_SOCK=/ssh-agent/ssh-agent.sock"
