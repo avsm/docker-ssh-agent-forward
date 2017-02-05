@@ -3,13 +3,13 @@ set -e
 
 IMAGE_NAME=pinata-sshd
 CONTAINER_NAME=pinata-sshd
-LOCAL_STATE=~/.pinata-sshd
 LOCAL_PORT=2244
 AUTHORIZED_KEYS=$(ssh-add -L | base64 -w0)
+KNOWN_HOSTS_FILE=$(mktemp)
+
+trap "rm ${KNOWN_HOSTS_FILE}" EXIT
 
 docker rm -f ${CONTAINER_NAME} >/dev/null 2>&1 || true
-rm -rf ${LOCAL_STATE}
-mkdir -p ${LOCAL_STATE}
 
 docker run --name ${CONTAINER_NAME} \
   -e AUTHORIZED_KEYS="${AUTHORIZED_KEYS}" \
@@ -20,9 +20,9 @@ if [ "${DOCKER_HOST}" ]; then
 else
   IP=127.0.0.1
 fi
-ssh-keyscan -p ${LOCAL_PORT} ${IP} > ${LOCAL_STATE}/known_hosts 2>/dev/null
+ssh-keyscan -p ${LOCAL_PORT} ${IP} > ${KNOWN_HOSTS_FILE} 2>/dev/null
 
-ssh -f -o "UserKnownHostsFile=${LOCAL_STATE}/known_hosts" \
+ssh -f -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" \
   -A -p ${LOCAL_PORT} root@${IP} \
   /root/ssh-forward-agent.sh
 
