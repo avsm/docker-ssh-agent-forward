@@ -5,15 +5,14 @@ IMAGE_NAME=pinata-sshd
 CONTAINER_NAME=pinata-sshd
 LOCAL_STATE=~/.pinata-sshd
 LOCAL_PORT=2244
+AUTHORIZED_KEYS=$(ssh-add -L | base64 -w0)
 
 docker rm -f ${CONTAINER_NAME} >/dev/null 2>&1 || true
 rm -rf ${LOCAL_STATE}
 mkdir -p ${LOCAL_STATE}
 
-ssh-add -L >${LOCAL_STATE}/authorized_keys
-
 docker run --name ${CONTAINER_NAME} \
-  -v ${LOCAL_STATE}:/tmp/.pinata-sshd \
+  -e AUTHORIZED_KEYS="${AUTHORIZED_KEYS}" \
   -d -p ${LOCAL_PORT}:22 ${IMAGE_NAME} > /dev/null
 
 if [ "${DOCKER_HOST}" ]; then
