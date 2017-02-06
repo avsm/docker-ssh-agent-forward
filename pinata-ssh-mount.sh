@@ -1,4 +1,4 @@
 #!/bin/sh
 
-echo "--volumes-from=pinata-sshd"
+echo "--volume=ssh-agent:/ssh-agent"
 echo "--env=SSH_AUTH_SOCK=/ssh-agent/ssh-agent.sock"
