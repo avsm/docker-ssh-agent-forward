@@ -12,7 +12,7 @@ trap "rm ${KNOWN_HOSTS_FILE}" EXIT
 
 docker rm -f ${CONTAINER_NAME} >/dev/null 2>&1 || true
 
-docker volume create ${VOLUME_NAME}
+docker volume create --name ${VOLUME_NAME}
 
 docker run --name ${CONTAINER_NAME} \
   -e AUTHORIZED_KEYS="${AUTHORIZED_KEYS}" \
