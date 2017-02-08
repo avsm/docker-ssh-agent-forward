@@ -1,5 +1,7 @@
-#!/bin/sh -e
+#!/bin/sh
 # Forward SSH agent socket to a well-known location
+set -eo pipefail
+
 FORWARDED_SOCKET=/ssh-agent/ssh-agent.sock
 
 rm -f ${FORWARDED_SOCKET}
