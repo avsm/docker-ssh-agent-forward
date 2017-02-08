@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -eo pipefail
 
 IMAGE_NAME=pinata-sshd
 CONTAINER_NAME=pinata-sshd
@@ -10,28 +10,41 @@ KNOWN_HOSTS_FILE=$(mktemp)
 
 trap "rm ${KNOWN_HOSTS_FILE}" EXIT
 
-docker rm -f ${CONTAINER_NAME} >/dev/null 2>&1 || true
+docker rm -f "${CONTAINER_NAME}" >/dev/null 2>&1 || true
 
-docker volume create --name ${VOLUME_NAME}
+docker volume create --name "${VOLUME_NAME}"
 
-docker run --name ${CONTAINER_NAME} \
+docker run \
+  --name "${CONTAINER_NAME}" \
   -e AUTHORIZED_KEYS="${AUTHORIZED_KEYS}" \
   -v ${VOLUME_NAME}:/ssh-agent \
-  -d -p ${HOST_PORT}:22 ${IMAGE_NAME} > /dev/null
+  -d \
+  -p "${HOST_PORT}:22" \
+  ${IMAGE_NAME} >/dev/null
 
 if [ "${DOCKER_HOST}" ]; then
   HOST_IP=$(echo $DOCKER_HOST | awk -F '//' '{print $2}' | awk -F ':' '{print $1}')
 else
   HOST_IP=127.0.0.1
 fi
-ssh-keyscan -p ${HOST_PORT} ${HOST_IP} > ${KNOWN_HOSTS_FILE} 2>/dev/null
+ssh-keyscan -p ${HOST_PORT} ${HOST_IP} >${KNOWN_HOSTS_FILE} 2>/dev/null
 
-ssh -f -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" \
-  -A -S none -p ${HOST_PORT} root@${HOST_IP} \
+ssh \
+  -A \
+  -f \
+  -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" \
+  -p "${HOST_PORT}" \
+  -S none \
+  "root@${HOST_IP}" \
   ssh-add -l
 
-ssh -f -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" \
-  -A -S none -p ${HOST_PORT} root@${HOST_IP} \
+ssh \
+  -A \
+  -f \
+  -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" \
+  -p "${HOST_PORT}" \
+  -S none \
+  "root@${HOST_IP}" \
   /root/ssh-forward-agent.sh
 
 echo 'Agent forwarding successfully started.'
