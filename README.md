@@ -23,7 +23,7 @@ and the you can run `pinata-ssh-mount` to get a Docker CLI fragment
 that adds the SSH agent socket and set `SSH_AUTH_SOCK` within the container.
 
 ```
-$ pinata-ssh-mount 
+$ pinata-ssh-mount
 -v /Users/avsm/.pinata-sshd/ssh-1azk9Mmd27/agent.16:/tmp/ssh-agent.sock --env SSH_AUTH_SOCK=/tmp/ssh-agent.sock
 
 $ docker run -it `pinata-ssh-mount` ocaml/opam ssh git@github.com
@@ -35,6 +35,13 @@ PTY allocation request failed on channel 0
 Hi avsm! You've successfully authenticated, but GitHub does not provide shell access.
 Connection to github.com closed.
 ```
+
+## TODO
+
+pinata-docker-pull.sh script
+
+update this readme to match the new socat stuff
+
 
 ## Contributors
 

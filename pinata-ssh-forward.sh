@@ -5,10 +5,15 @@ IMAGE_NAME=uber/ssh-agent-forward
 CONTAINER_NAME=pinata-sshd
 VOLUME_NAME=ssh-agent
 HOST_PORT=2244
-AUTHORIZED_KEYS=$(ssh-add -L | base64 -w0)
 KNOWN_HOSTS_FILE=$(mktemp)
 
 trap 'rm ${KNOWN_HOSTS_FILE}' EXIT
+
+if [ "$(uname)" = "Darwin" ]; then
+  AUTHORIZED_KEYS=$(ssh-add -L | base64)
+else
+  AUTHORIZED_KEYS=$(ssh-add -L | base64 -w0)
+fi
 
 docker rm -f "${CONTAINER_NAME}" >/dev/null 2>&1 || true
 
@@ -20,7 +25,7 @@ docker run \
   -v ${VOLUME_NAME}:/ssh-agent \
   -d \
   -p "${HOST_PORT}:22" \
-  ${IMAGE_NAME} >/dev/null
+  "${IMAGE_NAME}" >/dev/null
 
 if [ "${DOCKER_HOST}" ]; then
   HOST_IP=$(echo "$DOCKER_HOST" | awk -F '//' '{print $2}' | awk -F ':' '{print $1}')
@@ -31,7 +36,6 @@ ssh-keyscan -p "${HOST_PORT}" "${HOST_IP}" >"${KNOWN_HOSTS_FILE}" 2>/dev/null
 
 ssh \
   -A \
-  -f \
   -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" \
   -p "${HOST_PORT}" \
   -S none \
@@ -52,4 +56,4 @@ echo 'Run "pinata-ssh-mount" to get a command-line fragment that'
 echo 'can be added to "docker run" to mount the SSH agent socket.'
 echo ""
 echo 'For example:'
-echo 'docker run -it `pinata-ssh-mount` ocaml/opam ssh git@github.com'
+echo "docker run -it \$(pinata-ssh-mount) uber/ssh-agent-forward ssh -T git@github.com"
