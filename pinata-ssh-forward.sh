@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eo pipefail
 
-IMAGE_NAME=pinata-sshd
+IMAGE_NAME=uber/ssh-agent-forward
 CONTAINER_NAME=pinata-sshd
 VOLUME_NAME=ssh-agent
 HOST_PORT=2244

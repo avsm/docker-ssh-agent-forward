@@ -1,4 +1,4 @@
 #!/bin/sh
 set -eo pipefail
 
-docker build -t pinata-sshd .
+docker build -t uber/ssh-agent-forward .

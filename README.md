@@ -7,7 +7,7 @@ Still experimental -- contact anil@recoil.org if you want help.
 Assuming you have a `/usr/local`
 
 ```
-$ git clone git://github.com/avsm/docker-ssh-agent-forward
+$ git clone git://github.com/uber/docker-ssh-agent-forward
 $ cd docker-ssh-agent-forward
 $ make
 $ make install
