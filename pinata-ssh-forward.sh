@@ -28,6 +28,10 @@ ssh-keyscan -p ${HOST_PORT} ${HOST_IP} > ${KNOWN_HOSTS_FILE} 2>/dev/null
 
 ssh -f -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" \
   -A -S none -p ${HOST_PORT} root@${HOST_IP} \
+  ssh-add -l
+
+ssh -f -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" \
+  -A -S none -p ${HOST_PORT} root@${HOST_IP} \
   /root/ssh-forward-agent.sh
 
 echo 'Agent forwarding successfully started.'
