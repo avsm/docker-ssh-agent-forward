@@ -8,7 +8,7 @@ HOST_PORT=2244
 AUTHORIZED_KEYS=$(ssh-add -L | base64 -w0)
 KNOWN_HOSTS_FILE=$(mktemp)
 
-trap "rm ${KNOWN_HOSTS_FILE}" EXIT
+trap 'rm ${KNOWN_HOSTS_FILE}' EXIT
 
 docker rm -f "${CONTAINER_NAME}" >/dev/null 2>&1 || true
 
@@ -23,11 +23,11 @@ docker run \
   ${IMAGE_NAME} >/dev/null
 
 if [ "${DOCKER_HOST}" ]; then
-  HOST_IP=$(echo $DOCKER_HOST | awk -F '//' '{print $2}' | awk -F ':' '{print $1}')
+  HOST_IP=$(echo "$DOCKER_HOST" | awk -F '//' '{print $2}' | awk -F ':' '{print $1}')
 else
   HOST_IP=127.0.0.1
 fi
-ssh-keyscan -p ${HOST_PORT} ${HOST_IP} >${KNOWN_HOSTS_FILE} 2>/dev/null
+ssh-keyscan -p "${HOST_PORT}" "${HOST_IP}" >"${KNOWN_HOSTS_FILE}" 2>/dev/null
 
 ssh \
   -A \
