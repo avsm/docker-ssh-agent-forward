@@ -37,6 +37,12 @@ PTY allocation request failed on channel 0
 Hi avsm! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
+To fetch the latest image, do:
+
+```
+pinata-ssh-pull
+```
+
 
 ## Developing
 

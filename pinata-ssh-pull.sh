@@ -1,2 +1,2 @@
 #!/bin/sh
-exec docker pull uber/ssh-agent-forward
+exec docker pull uber/ssh-agent-forward:latest
