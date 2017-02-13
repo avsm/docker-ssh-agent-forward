@@ -1,6 +1,7 @@
 Forward SSH agent socket into a container
 
-Still experimental -- contact anil@recoil.org if you want help.
+Still experimental -- contact anil@recoil.org or bryan@uber.com if you want help.
+
 
 ## Installation
 
@@ -16,17 +17,18 @@ $ make install
 On every boot, do:
 
 ```
-$ pinata-ssh-forward
+pinata-ssh-forward
 ```
 
-and the you can run `pinata-ssh-mount` to get a Docker CLI fragment
-that adds the SSH agent socket and set `SSH_AUTH_SOCK` within the container.
+and the you can run `pinata-ssh-mount` to get a Docker CLI fragment that adds
+the SSH agent socket and sets `SSH_AUTH_SOCK` within the container.
 
 ```
 $ pinata-ssh-mount
--v /Users/avsm/.pinata-sshd/ssh-1azk9Mmd27/agent.16:/tmp/ssh-agent.sock --env SSH_AUTH_SOCK=/tmp/ssh-agent.sock
+--volume=ssh-agent:/ssh-agent
+--env=SSH_AUTH_SOCK=/ssh-agent/ssh-agent.sock
 
-$ docker run -it `pinata-ssh-mount` ocaml/opam ssh git@github.com
+$ docker run -it $(pinata-ssh-mount) ocaml/opam ssh git@github.com
 The authenticity of host 'github.com (192.30.252.128)' can't be established.
 RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.
 Are you sure you want to continue connecting (yes/no)? yes
@@ -36,15 +38,17 @@ Hi avsm! You've successfully authenticated, but GitHub does not provide shell ac
 Connection to github.com closed.
 ```
 
-## TODO
+## Developing
 
-pinata-docker-pull.sh script
+To build an image yourself rather than fetching from Docker Hub, run `./pinata-ssh-build.sh`
 
-update this readme to match the new socat stuff
+We didn't bother installing the build script with the Makefile since using the
+hub image should be the common case.
 
 
 ## Contributors
 
 * Justin Cormack
+* https://github.com/uber/docker-ssh-agent-forward/graphs/contributors
 
 [License](LICENSE.md) is ISC.

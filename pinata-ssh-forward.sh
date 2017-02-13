@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eo pipefail
 
-IMAGE_NAME=uber/ssh-agent-forward
+IMAGE_NAME=uber/ssh-agent-forward:latest
 CONTAINER_NAME=pinata-sshd
 VOLUME_NAME=ssh-agent
 HOST_PORT=2244
@@ -29,6 +29,7 @@ else
 fi
 ssh-keyscan -p "${HOST_PORT}" "${HOST_IP}" >"${KNOWN_HOSTS_FILE}" 2>/dev/null
 
+# show the keys that are being forwarded
 ssh \
   -A \
   -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" \
@@ -37,6 +38,7 @@ ssh \
   "root@${HOST_IP}" \
   ssh-add -l
 
+# keep the agent running
 ssh \
   -A \
   -f \
@@ -44,7 +46,7 @@ ssh \
   -p "${HOST_PORT}" \
   -S none \
   "root@${HOST_IP}" \
-  /root/ssh-forward-agent.sh
+  /ssh-entrypoint.sh
 
 echo 'Agent forwarding successfully started.'
 echo 'Run "pinata-ssh-mount" to get a command-line fragment that'
