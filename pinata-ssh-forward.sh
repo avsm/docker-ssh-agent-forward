@@ -5,15 +5,10 @@ IMAGE_NAME=uber/ssh-agent-forward
 CONTAINER_NAME=pinata-sshd
 VOLUME_NAME=ssh-agent
 HOST_PORT=2244
+AUTHORIZED_KEYS=$(ssh-add -L | base64 | tr -d '\n')
 KNOWN_HOSTS_FILE=$(mktemp)
 
 trap 'rm ${KNOWN_HOSTS_FILE}' EXIT
-
-if [ "$(uname)" = "Darwin" ]; then
-  AUTHORIZED_KEYS=$(ssh-add -L | base64)
-else
-  AUTHORIZED_KEYS=$(ssh-add -L | base64 -w0)
-fi
 
 docker rm -f "${CONTAINER_NAME}" >/dev/null 2>&1 || true
 
