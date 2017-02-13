@@ -25,8 +25,8 @@ the SSH agent socket and sets `SSH_AUTH_SOCK` within the container.
 
 ```
 $ pinata-ssh-mount
---volume=ssh-agent:/ssh-agent
---env=SSH_AUTH_SOCK=/ssh-agent/ssh-agent.sock
+-v ssh-agent:/ssh-agent
+-e SSH_AUTH_SOCK=/ssh-agent/ssh-agent.sock
 
 $ docker run -it $(pinata-ssh-mount) uber/docker-ssh-agent-forward ssh -T git@github.com
 The authenticity of host 'github.com (192.30.252.128)' can't be established.
