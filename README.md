@@ -38,9 +38,11 @@ Hi avsm! You've successfully authenticated, but GitHub does not provide shell ac
 Connection to github.com closed.
 ```
 
+
 ## Developing
 
-To build an image yourself rather than fetching from Docker Hub, run `./pinata-ssh-build.sh`
+To build an image yourself rather than fetching from Docker Hub, run
+`./pinata-ssh-build.sh` from your clone of this repo.
 
 We didn't bother installing the build script with the Makefile since using the
 hub image should be the common case.
