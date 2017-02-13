@@ -56,6 +56,6 @@ hub image should be the common case.
 ## Contributors
 
 * Justin Cormack
-* https://github.com/uber/docker-ssh-agent-forward/graphs/contributors
+* https://github.com/uber-common/docker-ssh-agent-forward/graphs/contributors
 
 [License](LICENSE.md) is ISC.
