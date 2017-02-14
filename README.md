@@ -8,7 +8,7 @@ Still experimental -- contact anil@recoil.org or bryan@uber.com if you want help
 Assuming you have a `/usr/local`
 
 ```
-$ git clone git://github.com/uber/docker-ssh-agent-forward
+$ git clone git://github.com/uber-common/docker-ssh-agent-forward
 $ cd docker-ssh-agent-forward
 $ make
 $ make install
@@ -27,7 +27,8 @@ the SSH agent socket and sets `SSH_AUTH_SOCK` within the container.
 $ pinata-ssh-mount
 -v ssh-agent:/ssh-agent -e SSH_AUTH_SOCK=/ssh-agent/ssh-agent.sock
 
-$ docker run -it $(pinata-ssh-mount) uber/ssh-agent-forward ssh -T git@github.com
+$ docker run -it $(pinata-ssh-mount) 
+/ssh-agent-forward ssh -T git@github.com
 The authenticity of host 'github.com (192.30.252.128)' can't be established.
 RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.
 Are you sure you want to continue connecting (yes/no)? yes
