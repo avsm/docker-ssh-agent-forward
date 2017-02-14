@@ -24,6 +24,11 @@ if [ "${DOCKER_HOST}" ]; then
 else
   HOST_IP=127.0.0.1
 fi
+
+# FIXME Find a way to get rid of this additional 1s wait
+sleep 1
+while [ 1 ] && ! nc -z -w5 ${HOST_IP} ${HOST_PORT}; do sleep 0.1; done
+
 ssh-keyscan -p ${HOST_PORT} ${HOST_IP} > ${KNOWN_HOSTS_FILE} 2>/dev/null
 
 ssh -f -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" \
