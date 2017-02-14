@@ -6,7 +6,7 @@ CONTAINER_NAME=pinata-sshd
 VOLUME_NAME=ssh-agent
 HOST_PORT=2244
 AUTHORIZED_KEYS=$(ssh-add -L | base64 | tr -d '\n')
-KNOWN_HOSTS_FILE=$(mktemp)
+KNOWN_HOSTS_FILE=$(mktemp -t dsaf)
 
 trap 'rm ${KNOWN_HOSTS_FILE}' EXIT
 
