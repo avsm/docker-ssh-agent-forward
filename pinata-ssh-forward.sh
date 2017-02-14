@@ -6,7 +6,7 @@ CONTAINER_NAME=pinata-sshd
 VOLUME_NAME=ssh-agent
 HOST_PORT=2244
 AUTHORIZED_KEYS=$(ssh-add -L | base64 | tr -d '\n')
-KNOWN_HOSTS_FILE=$(mktemp -t dsaf)
+KNOWN_HOSTS_FILE=$(mktemp -t dsaf.XXX)
 
 trap 'rm ${KNOWN_HOSTS_FILE}' EXIT
 
@@ -27,6 +27,11 @@ if [ "${DOCKER_HOST}" ]; then
 else
   HOST_IP=127.0.0.1
 fi
+
+# FIXME Find a way to get rid of this additional 1s wait
+sleep 1
+while [ 1 ] && ! nc -z -w5 ${HOST_IP} ${HOST_PORT}; do sleep 0.1; done
+
 ssh-keyscan -p "${HOST_PORT}" "${HOST_IP}" >"${KNOWN_HOSTS_FILE}" 2>/dev/null
 
 # show the keys that are being forwarded

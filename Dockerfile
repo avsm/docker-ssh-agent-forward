@@ -3,8 +3,7 @@ FROM alpine:3.5
 RUN apk add --no-cache openssh socat
 
 RUN mkdir /root/.ssh && \
-    chmod 700 /root/.ssh && \
-    ssh-keygen -A
+    chmod 700 /root/.ssh
 
 EXPOSE 22
 
