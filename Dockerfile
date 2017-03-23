@@ -1,7 +1,6 @@
 FROM alpine
 MAINTAINER Anil Madhavapeddy <anil@recoil.org>
-RUN apk update && apk add openssh && \
-    apk add --update --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ tini
+RUN apk update && apk add openssh tini
 RUN mkdir /root/.ssh && \
     chmod 700 /root/.ssh && \
     ssh-keygen -A
