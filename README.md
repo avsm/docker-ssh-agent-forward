@@ -4,13 +4,15 @@ Still experimental -- contact anil@recoil.org if you want help.
 
 ## Installation
 
-Assuming you have a `/usr/local`
+Assuming you'd like to install to /usr/local
 
 ```
 $ git clone git://github.com/avsm/docker-ssh-agent-forward
 $ make
-$ make install
+$ PREFIX=/usr/local make install
 ```
+
+## Usage
 
 On every boot, do:
 
@@ -18,7 +20,15 @@ On every boot, do:
 $ pinata-ssh-forward
 ```
 
-and the you can run `pinata-ssh-mount` to get a Docker CLI fragment
+If you install in current folder.
+```
+$ make
+$ PREFIX=. make install
+
+$ bin/pinata-ssh-forward
+`
+
+and then you can run `pinata-ssh-mount` to get a Docker CLI fragment
 that adds the SSH agent socket and set `SSH_AUTH_SOCK` within the container.
 
 ```
