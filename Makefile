@@ -1,6 +1,5 @@
-all:
+all: install
 	./pinata-build-sshd.sh
-	@echo Please run "make install"
 
 PREFIX ?= /usr/local
 BINDIR ?= $(PREFIX)/bin
