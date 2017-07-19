@@ -10,6 +10,7 @@ rm -rf ${LOCAL_STATE}
 mkdir -p ${LOCAL_STATE}
 
 docker run --name ${CONTAINER_NAME} \
+  --restart always \
   -v ~/.ssh/id_rsa.pub:/root/.ssh/authorized_keys \
   -v ${LOCAL_STATE}:/tmp \
   -d -p ${LOCAL_PORT}:22 ${IMAGE_NAME} > /dev/null
