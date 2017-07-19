@@ -9,7 +9,6 @@ Assuming you have a `/usr/local`
 ```
 $ git clone git://github.com/avsm/docker-ssh-agent-forward
 $ make
-$ make install
 ```
 
 On every boot, do:

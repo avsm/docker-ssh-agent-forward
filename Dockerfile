@@ -8,5 +8,5 @@ RUN mkdir /root/.ssh && \
 COPY ssh-find-agent.sh /root/ssh-find-agent.sh
 EXPOSE 22
 VOLUME ["/root/.ssh/authorized_keys"]
-ENTRYPOINT ["/usr/bin/tini","--"]
+ENTRYPOINT ["/sbin/tini","--"]
 CMD ["/usr/sbin/sshd","-D"]
