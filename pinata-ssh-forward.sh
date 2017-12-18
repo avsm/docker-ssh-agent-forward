@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 set -eo pipefail
 
 IMAGE_NAME=uber/ssh-agent-forward:latest
@@ -20,7 +20,8 @@ docker run \
   -v ${VOLUME_NAME}:/ssh-agent \
   -d \
   -p "${HOST_PORT}:22" \
-  "${IMAGE_NAME}" >/dev/null
+  "${IMAGE_NAME}" >/dev/null \
+;
 
 if [ "${DOCKER_HOST}" ]; then
   HOST_IP=$(echo "$DOCKER_HOST" | awk -F '//' '{print $2}' | awk -F ':' '{print $1}')
