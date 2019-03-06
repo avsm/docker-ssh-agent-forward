@@ -43,6 +43,9 @@ To fetch the latest image, do:
 pinata-ssh-pull
 ```
 
+## Troubleshooting
+
+If pinata-ssh-forward fails to run, run `ssh-add -l`. If there are no identities, then run `ssh-add`.
 
 ## Developing
 
@@ -51,7 +54,6 @@ To build an image yourself rather than fetching from Docker Hub, run
 
 We didn't bother installing the build script with the Makefile since using the
 hub image should be the common case.
-
 
 ## Contributors
 
