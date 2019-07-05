@@ -27,4 +27,4 @@ echo 'Run "pinata-ssh-mount" to get a command-line fragment that'
 echo 'can be added to "docker run" to mount the SSH agent socket.'
 echo ""
 echo 'For example:'
-echo 'docker run -it `pinata-ssh-mount` ocaml/opam ssh git@github.com'
+echo 'docker run -it `pinata-ssh-mount` pinata-sshd ssh git@github.com'
