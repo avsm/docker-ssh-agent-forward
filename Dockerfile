@@ -2,11 +2,16 @@ FROM alpine
 MAINTAINER Anil Madhavapeddy <anil@recoil.org>
 RUN apk update && apk add openssh && \
     apk add --update --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ tini
-RUN mkdir /root/.ssh && \
-    chmod 700 /root/.ssh && \
-    ssh-keygen -A
-COPY ssh-find-agent.sh /root/ssh-find-agent.sh
+# Create a group and user
+RUN addgroup pinata && \
+    adduser -D pinata -G pinata -s /bin/sh && \
+    passwd -u pinata && \
+    mkdir /home/pinata/.ssh && \
+    chmod 700 /home/pinata/.ssh && \
+    chown pinata:pinata /home/pinata/.ssh && \
+    ssh-keygen -A 
+COPY ssh-find-agent.sh /home/pinata/ssh-find-agent.sh
 EXPOSE 22
-VOLUME ["/root/.ssh/authorized_keys"]
+VOLUME ["/home/pinata/.ssh/authorized_keys"]
 ENTRYPOINT ["/sbin/tini","--"]
-CMD ["/usr/sbin/sshd","-D"]
+CMD ["/usr/sbin/sshd", "-D"]
