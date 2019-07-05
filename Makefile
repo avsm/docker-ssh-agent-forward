@@ -14,3 +14,6 @@ install:
 	cp pinata-build-sshd.sh $(BINDIR)/pinata-build-sshd
 	cp pinata-ssh-forward.sh $(BINDIR)/pinata-ssh-forward
 	cp pinata-ssh-mount.sh $(BINDIR)/pinata-ssh-mount
+
+clean:
+	docker stop pinata-sshd; docker rm pinata-sshd; docker rmi pinata-sshd; true
