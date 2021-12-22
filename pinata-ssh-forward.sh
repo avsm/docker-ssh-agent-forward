@@ -1,29 +1,62 @@
-#!/bin/sh -e
+#!/usr/bin/env bash
+set -eo pipefail
 
-IMAGE_NAME=pinata-sshd
+IMAGE_NAME=uber/ssh-agent-forward:latest
 CONTAINER_NAME=pinata-sshd
-LOCAL_STATE=~/.pinata-sshd
-LOCAL_PORT=2244
+VOLUME_NAME=ssh-agent
+HOST_PORT=2244
+AUTHORIZED_KEYS=$(ssh-add -L | base64 | tr -d '\n')
+KNOWN_HOSTS_FILE=$(mktemp -t dsaf.XXX)
 
-docker rm -f ${CONTAINER_NAME} >/dev/null 2>&1 || true
-rm -rf ${LOCAL_STATE}
-mkdir -p ${LOCAL_STATE}
+trap 'rm ${KNOWN_HOSTS_FILE}' EXIT
 
-docker run --name ${CONTAINER_NAME} \
-  -v ~/.ssh/id_rsa.pub:/root/.ssh/authorized_keys \
-  -v ${LOCAL_STATE}:/tmp \
-  -d -p ${LOCAL_PORT}:22 ${IMAGE_NAME} > /dev/null
+docker rm -f "${CONTAINER_NAME}" >/dev/null 2>&1 || true
 
-IP=`docker inspect --format '{{(index (index .NetworkSettings.Ports "22/tcp") 0).HostIp }}' ${CONTAINER_NAME}`
-ssh-keyscan -p ${LOCAL_PORT} ${IP} > ${LOCAL_STATE}/known_hosts 2>/dev/null
+docker volume create --name "${VOLUME_NAME}"
 
-ssh -f -o "UserKnownHostsFile=${LOCAL_STATE}/known_hosts" \
-  -A -p ${LOCAL_PORT} root@${IP} \
-  /root/ssh-find-agent.sh
+docker run \
+  --name "${CONTAINER_NAME}" \
+  -e AUTHORIZED_KEYS="${AUTHORIZED_KEYS}" \
+  -v ${VOLUME_NAME}:/ssh-agent \
+  -d \
+  -p "${HOST_PORT}:22" \
+  "${IMAGE_NAME}" >/dev/null \
+;
+
+if [ "${DOCKER_HOST}" ]; then
+  HOST_IP=$(echo "$DOCKER_HOST" | awk -F '//' '{print $2}' | awk -F ':' '{print $1}')
+else
+  HOST_IP=127.0.0.1
+fi
+
+# FIXME Find a way to get rid of this additional 1s wait
+sleep 1
+while ! nc -z -w5 ${HOST_IP} ${HOST_PORT}; do sleep 0.1; done
+
+ssh-keyscan -p "${HOST_PORT}" "${HOST_IP}" >"${KNOWN_HOSTS_FILE}" 2>/dev/null
+
+# show the keys that are being forwarded
+ssh \
+  -A \
+  -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" \
+  -p "${HOST_PORT}" \
+  -S none \
+  "root@${HOST_IP}" \
+  ssh-add -l
+
+# keep the agent running
+ssh \
+  -A \
+  -f \
+  -o "UserKnownHostsFile=${KNOWN_HOSTS_FILE}" \
+  -p "${HOST_PORT}" \
+  -S none \
+  "root@${HOST_IP}" \
+  /ssh-entrypoint.sh
 
 echo 'Agent forwarding successfully started.'
 echo 'Run "pinata-ssh-mount" to get a command-line fragment that'
 echo 'can be added to "docker run" to mount the SSH agent socket.'
 echo ""
 echo 'For example:'
-echo 'docker run -it `pinata-ssh-mount` ocaml/opam ssh git@github.com'
+echo "docker run -it \$(pinata-ssh-mount) uber/ssh-agent-forward ssh -T git@github.com"
